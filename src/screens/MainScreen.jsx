@@ -1,4 +1,5 @@
 import React from "react";
+import AvatarDesign from "../components/AvatarDesign";
 
 const MainScreen = () => {
   return (
@@ -18,7 +19,7 @@ const MainScreen = () => {
           </div>
           <div className="w-full md:w-1/2 md:pl-4">
             <div className="bg-gray-300 h-full">
-              Right column content goes here.
+              <AvatarDesign />
             </div>
           </div>
         </div>
