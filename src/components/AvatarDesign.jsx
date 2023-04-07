@@ -1,19 +1,27 @@
 import { useState } from "react";
 import { SketchPicker } from "react-color";
 
+const DEFAULT_CELLS_COLOR = "#ffffff";
+const DEFAULT_COLOR = "#000000";
+
 const AvatarDesign = () => {
-  const [color, setColor] = useState("#000000");
-  const [cells, setCells] = useState(Array(256).fill("#ffffff"));
+  const [color, setColor] = useState(DEFAULT_COLOR);
+  const [cells, setCells] = useState(Array(256).fill(DEFAULT_CELLS_COLOR));
   const [isMouseDown, setIsMouseDown] = useState(false);
+  const [draggingGrid, setDraggingGrid] = useState(false);
+  const [lastMousePosition, setLastMousePosition] = useState({ x: 0, y: 0 });
+  const [dragMode, setDragMode] = useState(false);
 
   const handleColorChange = newColor => {
     setColor(newColor.hex);
   };
 
   const handleCellClick = index => {
-    const newCells = [...cells];
-    newCells[index] = color;
-    setCells(newCells);
+    if (!dragMode) {
+      const newCells = [...cells];
+      newCells[index] = color;
+      setCells(newCells);
+    }
   };
 
   const handleMouseDown = index => {
@@ -26,8 +34,50 @@ const AvatarDesign = () => {
   };
 
   const handleMouseMove = (index, e) => {
-    if (isMouseDown && e.buttons === 1) {
+    if (!dragMode && isMouseDown && e.buttons === 1) {
       handleCellClick(index);
+    }
+  };
+
+  const shiftGrid = (cols, rows) => {
+    const newCells = Array(256).fill("#ffffff");
+    for (let i = 0; i < 256; i++) {
+      const newRow = (Math.floor(i / 16) + rows + 16) % 16;
+      const newCol = ((i % 16) + cols + 16) % 16;
+      newCells[newRow * 16 + newCol] = cells[i];
+    }
+    setCells(newCells);
+  };
+
+  const handleGridMouseDown = e => {
+    if (dragMode) {
+      setDraggingGrid(true);
+      setLastMousePosition({ x: e.clientX, y: e.clientY });
+    }
+  };
+
+  const handleGridMouseUp = () => {
+    setDraggingGrid(false);
+  };
+
+  const handleGridMouseMove = e => {
+    if (draggingGrid) {
+      const dx = e.clientX - lastMousePosition.x;
+      const dy = e.clientY - lastMousePosition.y;
+
+      const cellWidth = 16;
+      const cellHeight = 16;
+
+      const cols = Math.floor(dx / cellWidth);
+      const rows = Math.floor(dy / cellHeight);
+
+      if (cols !== 0 || rows !== 0) {
+        shiftGrid(cols, rows);
+        setLastMousePosition({
+          x: lastMousePosition.x + cols * cellWidth,
+          y: lastMousePosition.y + rows * cellHeight,
+        });
+      }
     }
   };
 
@@ -50,10 +100,29 @@ const AvatarDesign = () => {
   return (
     <div className="flex flex-col md:flex-row h-screen md:h-auto">
       <div className="md:w-1/2 flex items-center justify-center p-4">
-        <div className="w-64 h-64 grid grid-cols-16">{renderCells()}</div>
+        <div
+          className="w-64 h-64 grid grid-cols-16"
+          onMouseDown={handleGridMouseDown}
+          onMouseUp={handleGridMouseUp}
+          onMouseMove={handleGridMouseMove}
+        >
+          {renderCells()}
+        </div>
       </div>
-      <div className="md:w-1/2 flex items-center justify-center p-4">
+      <div className="md:w-1/2 flex items-center justify-center p-4 flex-col">
         <SketchPicker color={color} onChange={handleColorChange} />
+        <div className="mt-4">
+          <label htmlFor="dragMode" className="inline-flex items-center">
+            <input
+              type="checkbox"
+              id="dragMode"
+              className="form-checkbox"
+              checked={dragMode}
+              onChange={e => setDragMode(e.target.checked)}
+            />
+            <span className="ml-2">Enable drag mode</span>
+          </label>
+        </div>
       </div>
     </div>
   );
