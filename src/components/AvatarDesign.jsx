@@ -61,7 +61,7 @@ const AvatarDesign = () => {
   };
 
   const handleGridMouseMove = e => {
-    if (draggingGrid) {
+    if (draggingGrid && e.buttons === 1) {
       const dx = e.clientX - lastMousePosition.x;
       const dy = e.clientY - lastMousePosition.y;
 
