@@ -164,7 +164,7 @@ const AvatarDesign = () => {
             <i class="bi bi-arrows-move"></i> Move
           </span>
         </label>
-        <div>
+        <div className="flex items-center">
           <button
             className="bg-blue-500 text-white px-2 py-1 rounded"
             onClick={applyColorToAll}
@@ -172,7 +172,12 @@ const AvatarDesign = () => {
             <i class="bi bi-paint-bucket"></i>
           </button>
           <span className="ml-2">Background</span>
+          <div
+            className="ml-2 w-6 h-6 rounded-full border border-gray-300"
+            style={{ backgroundColor: color }}
+          ></div>
         </div>
+
         <label className="inline-flex items-center">
           <input
             type="checkbox"
