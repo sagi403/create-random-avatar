@@ -19,6 +19,7 @@ const AvatarDesign = () => {
 
   const handleColorChange = newColor => {
     setColor(newColor.hex);
+    setMode("");
   };
 
   const handleCellClick = index => {
@@ -110,6 +111,7 @@ const AvatarDesign = () => {
     const newCells = Array(256).fill(color);
     setCells(newCells);
     setDefaultColor(color);
+    setMode("");
   };
 
   const eraser = index => {
@@ -126,6 +128,7 @@ const AvatarDesign = () => {
     setCells(Array(256).fill(DEFAULT_CELLS_COLOR));
     setColor(DEFAULT_COLOR);
     setDefaultColor(DEFAULT_CELLS_COLOR);
+    setMode("");
   };
 
   return (
@@ -161,12 +164,15 @@ const AvatarDesign = () => {
             <i class="bi bi-arrows-move"></i> Move
           </span>
         </label>
-        <button
-          className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
-          onClick={applyColorToAll}
-        >
-          <i class="bi bi-paint-bucket"></i> Background
-        </button>
+        <div>
+          <button
+            className="bg-blue-500 text-white px-2 py-1 rounded"
+            onClick={applyColorToAll}
+          >
+            <i class="bi bi-paint-bucket"></i>
+          </button>
+          <span className="ml-2">Background</span>
+        </div>
         <label className="inline-flex items-center">
           <input
             type="checkbox"
@@ -177,12 +183,16 @@ const AvatarDesign = () => {
             <i class="bi bi-eraser"></i> Erase
           </span>
         </label>
-        <button
-          className="bg-red-500 text-white px-4 py-2 rounded ml-2"
-          onClick={resetToDefault}
-        >
-          <i class="bi bi-arrow-counterclockwise"></i> Default
-        </button>
+        <div>
+          <button
+            className="bg-red-500 text-white px-2 py-1 rounded"
+            onClick={resetToDefault}
+          >
+            {" "}
+            <i class="bi bi-arrow-counterclockwise"></i>
+          </button>
+          <span className="ml-2">Default</span>
+        </div>
       </div>
     </div>
   );
