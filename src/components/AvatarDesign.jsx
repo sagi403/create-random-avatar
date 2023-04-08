@@ -60,6 +60,8 @@ const AvatarDesign = () => {
     if (mode === MODES.drag) {
       setDraggingGrid(true);
       setLastMousePosition({ x: e.clientX, y: e.clientY });
+    } else if (mode === MODES.eraser) {
+      setDraggingGrid(false);
     }
   };
 
@@ -127,9 +129,9 @@ const AvatarDesign = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen sm:h-auto">
-      <div className="flex-grow flex">
-        <div className="flex lg:flex-row flex-col items-center justify-around w-full py-10">
+    <div className="flex flex-col h-auto">
+      <div className="flex-grow flex xl:flex-row">
+        <div className="flex xl:flex-row gap-6 flex-col items-center justify-around w-full py-10">
           <div className="bg-neutral-500 p-8 rounded-3xl">
             <div
               className="w-64 h-64 grid grid-cols-16"
@@ -155,13 +157,15 @@ const AvatarDesign = () => {
             checked={mode === MODES.drag}
             onChange={() => handleModeChange(MODES.drag)}
           />
-          <span className="ml-2">Enable drag mode</span>
+          <span className="ml-2">
+            <i class="bi bi-arrows-move"></i> Move
+          </span>
         </label>
         <button
           className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
           onClick={applyColorToAll}
         >
-          Apply color to all
+          <i class="bi bi-paint-bucket"></i> Background
         </button>
         <label className="inline-flex items-center">
           <input
@@ -169,13 +173,15 @@ const AvatarDesign = () => {
             checked={mode === MODES.eraser}
             onChange={() => handleModeChange(MODES.eraser)}
           />
-          <span className="ml-2">Enable Eraser Mode</span>
+          <span className="ml-2">
+            <i class="bi bi-eraser"></i> Erase
+          </span>
         </label>
         <button
           className="bg-red-500 text-white px-4 py-2 rounded ml-2"
           onClick={resetToDefault}
         >
-          Back to Default
+          <i class="bi bi-arrow-counterclockwise"></i> Default
         </button>
       </div>
     </div>
