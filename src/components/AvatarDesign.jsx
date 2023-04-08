@@ -5,19 +5,23 @@ const DEFAULT_CELLS_COLOR = "#ffffff";
 const DEFAULT_COLOR = "#000000";
 
 const AvatarDesign = () => {
+  const [defaultColor, setDefaultColor] = useState(DEFAULT_CELLS_COLOR);
   const [color, setColor] = useState(DEFAULT_COLOR);
   const [cells, setCells] = useState(Array(256).fill(DEFAULT_CELLS_COLOR));
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [draggingGrid, setDraggingGrid] = useState(false);
   const [lastMousePosition, setLastMousePosition] = useState({ x: 0, y: 0 });
   const [dragMode, setDragMode] = useState(false);
+  const [eraserMode, setEraserMode] = useState(false);
 
   const handleColorChange = newColor => {
     setColor(newColor.hex);
   };
 
   const handleCellClick = index => {
-    if (!dragMode) {
+    if (eraserMode) {
+      eraser(index);
+    } else if (!dragMode) {
       const newCells = [...cells];
       newCells[index] = color;
       setCells(newCells);
@@ -97,32 +101,61 @@ const AvatarDesign = () => {
     });
   };
 
+  const applyColorToAll = () => {
+    const newCells = Array(256).fill(color);
+    setCells(newCells);
+    setDefaultColor(color);
+  };
+
+  const eraser = index => {
+    const newCells = [...cells];
+    newCells[index] = defaultColor;
+    setCells(newCells);
+  };
+
   return (
-    <div className="flex flex-col md:flex-row h-screen md:h-auto">
-      <div className="md:w-1/2 flex items-center justify-center p-4">
-        <div
-          className="w-64 h-64 grid grid-cols-16"
-          onMouseDown={handleGridMouseDown}
-          onMouseUp={handleGridMouseUp}
-          onMouseMove={handleGridMouseMove}
-        >
-          {renderCells()}
+    <div className="flex flex-col h-screen sm:h-auto">
+      <div className="flex-grow flex">
+        <div className="flex lg:flex-row flex-col items-center justify-around w-full py-10">
+          <div
+            className="w-64 h-64 grid grid-cols-16"
+            onMouseDown={handleGridMouseDown}
+            onMouseUp={handleGridMouseUp}
+            onMouseMove={handleGridMouseMove}
+          >
+            {renderCells()}
+          </div>
+          <div className="flex flex-col justify-center">
+            <SketchPicker color={color} onChange={handleColorChange} />
+          </div>
         </div>
       </div>
-      <div className="md:w-1/2 flex items-center justify-center p-4 flex-col">
-        <SketchPicker color={color} onChange={handleColorChange} />
-        <div className="mt-4">
-          <label htmlFor="dragMode" className="inline-flex items-center">
-            <input
-              type="checkbox"
-              id="dragMode"
-              className="form-checkbox"
-              checked={dragMode}
-              onChange={e => setDragMode(e.target.checked)}
-            />
-            <span className="ml-2">Enable drag mode</span>
-          </label>
-        </div>
+
+      <div className="flex items-center justify-around m-4">
+        <label htmlFor="dragMode" className="inline-flex items-center mr-2">
+          <input
+            type="checkbox"
+            id="dragMode"
+            className="form-checkbox"
+            checked={dragMode}
+            onChange={e => setDragMode(e.target.checked)}
+          />
+          <span className="ml-2">Enable drag mode</span>
+        </label>
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+          onClick={applyColorToAll}
+        >
+          Apply color to all
+        </button>
+        <label className="inline-flex items-center">
+          <input
+            type="checkbox"
+            checked={eraserMode}
+            onChange={e => setEraserMode(e.target.checked)}
+          />
+          <span className="ml-2">Enable Eraser Mode</span>
+        </label>
       </div>
     </div>
   );
