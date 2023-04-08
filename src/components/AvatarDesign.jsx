@@ -15,17 +15,16 @@ const AvatarDesign = () => {
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [draggingGrid, setDraggingGrid] = useState(false);
   const [lastMousePosition, setLastMousePosition] = useState({ x: 0, y: 0 });
-  const [dragMode, setDragMode] = useState(false);
-  const [eraserMode, setEraserMode] = useState(false);
+  const [mode, setMode] = useState("");
 
   const handleColorChange = newColor => {
     setColor(newColor.hex);
   };
 
   const handleCellClick = index => {
-    if (eraserMode) {
+    if (mode === MODES.eraser) {
       eraser(index);
-    } else if (!dragMode) {
+    } else if (mode !== MODES.drag) {
       const newCells = [...cells];
       newCells[index] = color;
       setCells(newCells);
@@ -42,7 +41,7 @@ const AvatarDesign = () => {
   };
 
   const handleMouseMove = (index, e) => {
-    if (!dragMode && isMouseDown && e.buttons === 1) {
+    if (isMouseDown && e.buttons === 1) {
       handleCellClick(index);
     }
   };
@@ -58,7 +57,7 @@ const AvatarDesign = () => {
   };
 
   const handleGridMouseDown = e => {
-    if (dragMode) {
+    if (mode === MODES.drag) {
       setDraggingGrid(true);
       setLastMousePosition({ x: e.clientX, y: e.clientY });
     }
@@ -117,18 +116,8 @@ const AvatarDesign = () => {
     setCells(newCells);
   };
 
-  const handleModeChange = (mode, e) => {
-    if (mode === MODES.drag) {
-      setDragMode(e.target.checked);
-      if (e.target.checked) {
-        setEraserMode(false);
-      }
-    } else if (mode === MODES.eraser) {
-      setEraserMode(e.target.checked);
-      if (e.target.checked) {
-        setDragMode(false);
-      }
-    }
+  const handleModeChange = newMode => {
+    setMode(prevMode => (prevMode === newMode ? "" : newMode));
   };
 
   const resetToDefault = () => {
@@ -163,8 +152,8 @@ const AvatarDesign = () => {
             type="checkbox"
             id="dragMode"
             className="form-checkbox"
-            checked={dragMode}
-            onChange={e => handleModeChange(MODES.drag, e)}
+            checked={mode === MODES.drag}
+            onChange={() => handleModeChange(MODES.drag)}
           />
           <span className="ml-2">Enable drag mode</span>
         </label>
@@ -177,8 +166,8 @@ const AvatarDesign = () => {
         <label className="inline-flex items-center">
           <input
             type="checkbox"
-            checked={eraserMode}
-            onChange={e => handleModeChange(MODES.eraser, e)}
+            checked={mode === MODES.eraser}
+            onChange={() => handleModeChange(MODES.eraser)}
           />
           <span className="ml-2">Enable Eraser Mode</span>
         </label>
