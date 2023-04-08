@@ -3,6 +3,10 @@ import { SketchPicker } from "react-color";
 
 const DEFAULT_CELLS_COLOR = "#ffffff";
 const DEFAULT_COLOR = "#000000";
+const MODES = {
+  drag: "drag",
+  eraser: "eraser",
+};
 
 const AvatarDesign = () => {
   const [defaultColor, setDefaultColor] = useState(DEFAULT_CELLS_COLOR);
@@ -113,17 +117,33 @@ const AvatarDesign = () => {
     setCells(newCells);
   };
 
+  const handleModeChange = (mode, e) => {
+    if (mode === MODES.drag) {
+      setDragMode(e.target.checked);
+      if (e.target.checked) {
+        setEraserMode(false);
+      }
+    } else if (mode === MODES.eraser) {
+      setEraserMode(e.target.checked);
+      if (e.target.checked) {
+        setDragMode(false);
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen sm:h-auto">
       <div className="flex-grow flex">
         <div className="flex lg:flex-row flex-col items-center justify-around w-full py-10">
-          <div
-            className="w-64 h-64 grid grid-cols-16"
-            onMouseDown={handleGridMouseDown}
-            onMouseUp={handleGridMouseUp}
-            onMouseMove={handleGridMouseMove}
-          >
-            {renderCells()}
+          <div className="bg-neutral-500 p-8 rounded-3xl">
+            <div
+              className="w-64 h-64 grid grid-cols-16"
+              onMouseDown={handleGridMouseDown}
+              onMouseUp={handleGridMouseUp}
+              onMouseMove={handleGridMouseMove}
+            >
+              {renderCells()}
+            </div>
           </div>
           <div className="flex flex-col justify-center">
             <SketchPicker color={color} onChange={handleColorChange} />
@@ -138,7 +158,7 @@ const AvatarDesign = () => {
             id="dragMode"
             className="form-checkbox"
             checked={dragMode}
-            onChange={e => setDragMode(e.target.checked)}
+            onChange={e => handleModeChange(MODES.drag, e)}
           />
           <span className="ml-2">Enable drag mode</span>
         </label>
@@ -152,7 +172,7 @@ const AvatarDesign = () => {
           <input
             type="checkbox"
             checked={eraserMode}
-            onChange={e => setEraserMode(e.target.checked)}
+            onChange={e => handleModeChange(MODES.eraser, e)}
           />
           <span className="ml-2">Enable Eraser Mode</span>
         </label>
