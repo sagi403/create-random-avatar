@@ -131,6 +131,12 @@ const AvatarDesign = () => {
     }
   };
 
+  const resetToDefault = () => {
+    setCells(Array(256).fill(DEFAULT_CELLS_COLOR));
+    setColor(DEFAULT_COLOR);
+    setDefaultColor(DEFAULT_CELLS_COLOR);
+  };
+
   return (
     <div className="flex flex-col h-screen sm:h-auto">
       <div className="flex-grow flex">
@@ -176,6 +182,12 @@ const AvatarDesign = () => {
           />
           <span className="ml-2">Enable Eraser Mode</span>
         </label>
+        <button
+          className="bg-red-500 text-white px-4 py-2 rounded ml-2"
+          onClick={resetToDefault}
+        >
+          Back to Default
+        </button>
       </div>
     </div>
   );
