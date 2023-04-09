@@ -93,11 +93,24 @@ const AvatarDesign = () => {
 
   const renderCells = () => {
     return cells.map((cellColor, index) => {
+      let cursorStyle = `url('/pen.png'), auto`;
+
+      if (mode === MODES.eraser) {
+        cursorStyle = `url('/eraser.png'), auto`;
+      } else if (mode === MODES.drag) {
+        cursorStyle = `move`;
+      }
+
+      const cellStyle = {
+        backgroundColor: cellColor,
+        cursor: cursorStyle,
+      };
+
       return (
         <div
           key={index}
           className="w-4 h-4 border border-gray-300"
-          style={{ backgroundColor: cellColor }}
+          style={cellStyle}
           onMouseDown={() => handleMouseDown(index)}
           onMouseUp={handleMouseUp}
           onMouseMove={e => handleMouseMove(index, e)}
@@ -161,7 +174,7 @@ const AvatarDesign = () => {
             onChange={() => handleModeChange(MODES.drag)}
           />
           <span className="ml-2">
-            <i class="bi bi-arrows-move"></i> Move
+            <i className="bi bi-arrows-move"></i> Move
           </span>
         </label>
         <div className="flex items-center">
@@ -169,7 +182,7 @@ const AvatarDesign = () => {
             className="bg-blue-500 text-white px-2 py-1 rounded"
             onClick={applyColorToAll}
           >
-            <i class="bi bi-paint-bucket"></i>
+            <i className="bi bi-paint-bucket"></i>
           </button>
           <span className="ml-2">Background</span>
           <div
@@ -185,7 +198,7 @@ const AvatarDesign = () => {
             onChange={() => handleModeChange(MODES.eraser)}
           />
           <span className="ml-2">
-            <i class="bi bi-eraser"></i> Erase
+            <i className="bi bi-eraser"></i> Erase
           </span>
         </label>
         <div>
@@ -194,7 +207,7 @@ const AvatarDesign = () => {
             onClick={resetToDefault}
           >
             {" "}
-            <i class="bi bi-arrow-counterclockwise"></i>
+            <i className="bi bi-arrow-counterclockwise"></i>
           </button>
           <span className="ml-2">Default</span>
         </div>
