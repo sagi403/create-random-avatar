@@ -1,21 +1,35 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SketchPicker } from "react-color";
+import { DEFAULT_CELLS_COLOR, DEFAULT_COLOR, MODES } from "../constants/const";
 
-const DEFAULT_CELLS_COLOR = "#ffffff";
-const DEFAULT_COLOR = "#000000";
-const MODES = {
-  drag: "drag",
-  eraser: "eraser",
+const gridToArray = (arr, size) => {
+  const grid = [];
+  for (let i = 0; i < arr.length; i += size) {
+    grid.push(arr.slice(i, i + size));
+  }
+  return grid;
 };
 
-const AvatarDesign = () => {
+const AvatarDesign = ({ cells, setCells, setCode }) => {
   const [defaultColor, setDefaultColor] = useState(DEFAULT_CELLS_COLOR);
   const [color, setColor] = useState(DEFAULT_COLOR);
-  const [cells, setCells] = useState(Array(256).fill(DEFAULT_CELLS_COLOR));
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [draggingGrid, setDraggingGrid] = useState(false);
   const [lastMousePosition, setLastMousePosition] = useState({ x: 0, y: 0 });
   const [mode, setMode] = useState("");
+
+  const updateCode = (row, col, color) => {
+    const codeArray = gridToArray(cells, 16);
+    codeArray[row][col] = color;
+
+    let codeString = `export const test1: string[][] = [\n`;
+    for (const row of codeArray) {
+      codeString += ` [${row.join(", ")}],\n`;
+    }
+    codeString += `];`;
+
+    setCode(codeString);
+  };
 
   const handleColorChange = newColor => {
     setColor(newColor.hex);
@@ -23,12 +37,17 @@ const AvatarDesign = () => {
   };
 
   const handleCellClick = index => {
+    const row = Math.floor(index / 16);
+    const col = index % 16;
+
     if (mode === MODES.eraser) {
       eraser(index);
+      updateCode(row, col, defaultColor);
     } else if (mode !== MODES.drag) {
       const newCells = [...cells];
       newCells[index] = color;
       setCells(newCells);
+      updateCode(row, col, color);
     }
   };
 
