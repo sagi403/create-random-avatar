@@ -7,7 +7,7 @@ SyntaxHighlighter.registerLanguage("jsx", jsx);
 const AvatarCode = ({ code }) => {
   const customTwilight = JSON.parse(JSON.stringify(twilight));
 
-  customTwilight['code[class*="language-"]'].fontSize = "9px";
+  customTwilight['code[class*="language-"]'].fontSize = "12px";
 
   return (
     <SyntaxHighlighter

@@ -1,14 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SketchPicker } from "react-color";
 import { DEFAULT_CELLS_COLOR, DEFAULT_COLOR, MODES } from "../constants/const";
-
-const gridToArray = (arr, size) => {
-  const grid = [];
-  for (let i = 0; i < arr.length; i += size) {
-    grid.push(arr.slice(i, i + size));
-  }
-  return grid;
-};
 
 const AvatarDesign = ({ cells, setCells, setCode }) => {
   const [defaultColor, setDefaultColor] = useState(DEFAULT_CELLS_COLOR);
@@ -19,12 +11,13 @@ const AvatarDesign = ({ cells, setCells, setCode }) => {
   const [mode, setMode] = useState("");
 
   const updateCode = (row, col, color) => {
-    const codeArray = gridToArray(cells, 16);
+    const codeArray = cells;
+
     codeArray[row][col] = color;
 
     let codeString = `export const test1: string[][] = [\n`;
     for (const row of codeArray) {
-      codeString += ` [${row.join(", ")}],\n`;
+      codeString += ` [${row.map(cell => `'${cell}'`).join(", ")}],\n`;
     }
     codeString += `];`;
 
@@ -36,42 +29,43 @@ const AvatarDesign = ({ cells, setCells, setCode }) => {
     setMode("");
   };
 
-  const handleCellClick = index => {
-    const row = Math.floor(index / 16);
-    const col = index % 16;
-
+  const handleCellClick = (row, col) => {
     if (mode === MODES.eraser) {
-      eraser(index);
+      eraser(row, col);
       updateCode(row, col, defaultColor);
     } else if (mode !== MODES.drag) {
-      const newCells = [...cells];
-      newCells[index] = color;
+      const newCells = cells.map(rowCells => [...rowCells]);
+      newCells[row][col] = color;
       setCells(newCells);
       updateCode(row, col, color);
     }
   };
 
-  const handleMouseDown = index => {
+  const handleMouseDown = (row, col) => {
     setIsMouseDown(true);
-    handleCellClick(index);
+    handleCellClick(row, col);
   };
 
   const handleMouseUp = () => {
     setIsMouseDown(false);
   };
 
-  const handleMouseMove = (index, e) => {
+  const handleMouseMove = (row, col, e) => {
     if (isMouseDown && e.buttons === 1) {
-      handleCellClick(index);
+      handleCellClick(row, col);
     }
   };
 
   const shiftGrid = (cols, rows) => {
-    const newCells = Array(256).fill("#ffffff");
-    for (let i = 0; i < 256; i++) {
-      const newRow = (Math.floor(i / 16) + rows + 16) % 16;
-      const newCol = ((i % 16) + cols + 16) % 16;
-      newCells[newRow * 16 + newCol] = cells[i];
+    const newCells = Array.from({ length: 16 }, () =>
+      Array(16).fill(DEFAULT_CELLS_COLOR)
+    );
+    for (let row = 0; row < 16; row++) {
+      for (let col = 0; col < 16; col++) {
+        const newRow = (row + rows + 16) % 16;
+        const newCol = (col + cols + 16) % 16;
+        newCells[newRow][newCol] = cells[row][col];
+      }
     }
     setCells(newCells);
   };
@@ -111,44 +105,53 @@ const AvatarDesign = ({ cells, setCells, setCode }) => {
   };
 
   const renderCells = () => {
-    return cells.map((cellColor, index) => {
-      let cursorStyle = `url('/pen.png'), auto`;
+    return cells.map((rowCells, rowIndex) => {
+      console.log(rowCells);
+      return rowCells.map((cellColor, colIndex) => {
+        let cursorStyle = `url('/pen.png'), auto`;
 
-      if (mode === MODES.eraser) {
-        cursorStyle = `url('/eraser.png'), auto`;
-      } else if (mode === MODES.drag) {
-        cursorStyle = `move`;
-      }
+        if (mode === MODES.eraser) {
+          cursorStyle = `url('/eraser.png'), auto`;
+        } else if (mode === MODES.drag) {
+          cursorStyle = `move`;
+        }
 
-      const cellStyle = {
-        backgroundColor: cellColor,
-        cursor: cursorStyle,
-      };
+        const cellStyle = {
+          backgroundColor: cellColor,
+          cursor: cursorStyle,
+        };
 
-      return (
-        <div
-          key={index}
-          className="w-4 h-4 border border-gray-300"
-          style={cellStyle}
-          onMouseDown={() => handleMouseDown(index)}
-          onMouseUp={handleMouseUp}
-          onMouseMove={e => handleMouseMove(index, e)}
-          onDragStart={e => e.preventDefault()}
-        ></div>
-      );
+        return (
+          <div
+            key={`${rowIndex}-${colIndex}`}
+            className="w-4 h-4 border border-gray-300"
+            style={cellStyle}
+            onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
+            onMouseUp={handleMouseUp}
+            onMouseMove={e => handleMouseMove(rowIndex, colIndex, e)}
+            onDragStart={e => e.preventDefault()}
+          ></div>
+        );
+      });
     });
   };
 
   const applyColorToAll = () => {
-    const newCells = Array(256).fill(color);
+    const newCells = Array.from({ length: 16 }, () => Array(16).fill(color));
     setCells(newCells);
     setDefaultColor(color);
     setMode("");
+
+    for (let row = 0; row < 16; row++) {
+      for (let col = 0; col < 16; col++) {
+        updateCode(row, col, color);
+      }
+    }
   };
 
-  const eraser = index => {
+  const eraser = (row, col) => {
     const newCells = [...cells];
-    newCells[index] = defaultColor;
+    newCells[row][col] = defaultColor;
     setCells(newCells);
   };
 
@@ -157,10 +160,19 @@ const AvatarDesign = ({ cells, setCells, setCode }) => {
   };
 
   const resetToDefault = () => {
-    setCells(Array(256).fill(DEFAULT_CELLS_COLOR));
+    const newCells = Array.from({ length: 16 }, () =>
+      Array(16).fill(DEFAULT_CELLS_COLOR)
+    );
+    setCells(newCells);
     setColor(DEFAULT_COLOR);
     setDefaultColor(DEFAULT_CELLS_COLOR);
     setMode("");
+
+    for (let row = 0; row < 16; row++) {
+      for (let col = 0; col < 16; col++) {
+        updateCode(row, col, DEFAULT_CELLS_COLOR);
+      }
+    }
   };
 
   return (

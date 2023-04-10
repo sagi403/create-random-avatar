@@ -4,7 +4,9 @@ import AvatarCode from "../components/AvatarCode";
 import { DEFAULT_CODE, DEFAULT_CELLS_COLOR } from "../constants/const";
 
 const MainScreen = () => {
-  const [cells, setCells] = useState(Array(256).fill(DEFAULT_CELLS_COLOR));
+  const [cells, setCells] = useState(
+    Array.from({ length: 16 }, () => Array(16).fill(DEFAULT_CELLS_COLOR))
+  );
   const [code, setCode] = useState(DEFAULT_CODE);
 
   return (
