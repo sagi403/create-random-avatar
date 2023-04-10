@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { SketchPicker } from "react-color";
 import { DEFAULT_CELLS_COLOR, DEFAULT_COLOR, MODES } from "../constants/const";
 
@@ -10,19 +10,18 @@ const AvatarDesign = ({ cells, setCells, setCode }) => {
   const [lastMousePosition, setLastMousePosition] = useState({ x: 0, y: 0 });
   const [mode, setMode] = useState("");
 
-  const updateCode = (row, col, color) => {
-    const codeArray = cells;
+  const updateCode = useCallback(
+    newCells => {
+      let codeString = `export const test1: string[][] = [\n`;
+      for (const row of newCells) {
+        codeString += ` [${row.map(cell => `'${cell}'`).join(", ")}],\n`;
+      }
+      codeString += `];`;
 
-    codeArray[row][col] = color;
-
-    let codeString = `export const test1: string[][] = [\n`;
-    for (const row of codeArray) {
-      codeString += ` [${row.map(cell => `'${cell}'`).join(", ")}],\n`;
-    }
-    codeString += `];`;
-
-    setCode(codeString);
-  };
+      setCode(codeString);
+    },
+    [setCode]
+  );
 
   const handleColorChange = newColor => {
     setColor(newColor.hex);
@@ -30,15 +29,16 @@ const AvatarDesign = ({ cells, setCells, setCode }) => {
   };
 
   const handleCellClick = (row, col) => {
+    const newCells = cells.map(rowCells => [...rowCells]);
+
     if (mode === MODES.eraser) {
-      eraser(row, col);
-      updateCode(row, col, defaultColor);
+      newCells[row][col] = defaultColor;
     } else if (mode !== MODES.drag) {
-      const newCells = cells.map(rowCells => [...rowCells]);
       newCells[row][col] = color;
-      setCells(newCells);
-      updateCode(row, col, color);
     }
+
+    setCells(newCells);
+    updateCode(newCells);
   };
 
   const handleMouseDown = (row, col) => {
@@ -106,7 +106,6 @@ const AvatarDesign = ({ cells, setCells, setCode }) => {
 
   const renderCells = () => {
     return cells.map((rowCells, rowIndex) => {
-      console.log(rowCells);
       return rowCells.map((cellColor, colIndex) => {
         let cursorStyle = `url('/pen.png'), auto`;
 
@@ -138,21 +137,12 @@ const AvatarDesign = ({ cells, setCells, setCode }) => {
 
   const applyColorToAll = () => {
     const newCells = Array.from({ length: 16 }, () => Array(16).fill(color));
+
     setCells(newCells);
     setDefaultColor(color);
     setMode("");
 
-    for (let row = 0; row < 16; row++) {
-      for (let col = 0; col < 16; col++) {
-        updateCode(row, col, color);
-      }
-    }
-  };
-
-  const eraser = (row, col) => {
-    const newCells = [...cells];
-    newCells[row][col] = defaultColor;
-    setCells(newCells);
+    updateCode(newCells);
   };
 
   const handleModeChange = newMode => {
@@ -168,11 +158,7 @@ const AvatarDesign = ({ cells, setCells, setCode }) => {
     setDefaultColor(DEFAULT_CELLS_COLOR);
     setMode("");
 
-    for (let row = 0; row < 16; row++) {
-      for (let col = 0; col < 16; col++) {
-        updateCode(row, col, DEFAULT_CELLS_COLOR);
-      }
-    }
+    updateCode(newCells);
   };
 
   return (
