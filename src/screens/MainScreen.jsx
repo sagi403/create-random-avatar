@@ -20,7 +20,7 @@ const MainScreen = () => {
         <hr />
         <div className="flex flex-col lg:flex-row my-6">
           <div className="lg:w-1/2 lg:pr-4">
-            <div className="bg-gray-200 h-full">
+            <div className="h-full">
               <AvatarCode code={code} />
             </div>
           </div>
