@@ -31,19 +31,19 @@ const AvatarCode = ({ code }) => {
 
   return (
     <div className="flex flex-col shadow-lg">
-      <div className="flex justify-between items-center bg-neutral-700 pt-1 px-0.75 rounded-tl rounded-tr">
-        <div className="text-white py-2 px-4 bg-neutral-900 rounded-tl rounded-tr">
+      <div className="flex justify-between items-center bg-neutral-800 pt-1 px-0.75 rounded-tl rounded-tr">
+        <div className="text-neutral-100 py-2 px-4 bg-neutral-900 rounded-tl rounded-tr">
           Editor
         </div>
         <div className="mr-2">
           <button
-            className="bg-neutral-800 px-2 py-1 text-white rounded mr-2 focus:outline-none focus:ring-2 focus:ring-neutral-600 transition-transform duration-200 ease-in-out transform hover:scale-110"
+            className="bg-neutral-700 px-2 py-1 text-neutral-100 rounded mr-2 focus:outline-none focus:ring-2 focus:ring-neutral-600 transition-transform duration-200 ease-in-out transform hover:scale-110"
             onClick={() => handleFontSizeChange(-1)}
           >
             <i className="bi bi-zoom-out"></i>
           </button>
           <button
-            className="bg-neutral-800 px-2 py-1 text-white rounded focus:outline-none focus:ring-2 focus:ring-neutral-600 transition-transform duration-200 ease-in-out transform hover:scale-110"
+            className="bg-neutral-700 px-2 py-1 text-neutral-100 rounded focus:outline-none focus:ring-2 focus:ring-neutral-600 transition-transform duration-200 ease-in-out transform hover:scale-110"
             onClick={() => handleFontSizeChange(1)}
           >
             <i className="bi bi-zoom-in"></i>
@@ -58,15 +58,15 @@ const AvatarCode = ({ code }) => {
           margin: "0px",
           borderRadius: "0px",
           borderTop: "none",
-          borderLeft: "3px solid #404040",
-          borderRight: "3px solid #404040",
-          borderBottom: "3px solid #404040",
+          borderLeft: "3px solid #262626",
+          borderRight: "3px solid #262626",
+          borderBottom: "3px solid #262626",
         }}
       >
         {code}
       </SyntaxHighlighter>
       <button
-        className="bg-neutral-700 w-full py-2 text-white text-center rounded-bl rounded-br hover:shadow-lg active:-translate-y-0.5"
+        className="bg-neutral-800 w-full py-2 text-neutral-100 text-center rounded-bl rounded-br hover:shadow-lg active:-translate-y-0.5"
         onClick={handleCopy}
       >
         Copy to clipboard

@@ -165,7 +165,7 @@ const AvatarDesign = ({ cells, setCells, setCode }) => {
     <div className="flex flex-col h-auto">
       <div className="flex-grow flex xl:flex-row">
         <div className="flex xl:flex-row gap-6 flex-col items-center justify-around w-full py-10">
-          <div className="bg-neutral-500 p-8 rounded-3xl">
+          <div className="bg-neutral-800 p-5 rounded-3xl shadow-lg">
             <div
               className="w-64 h-64 grid grid-cols-16"
               onMouseDown={handleGridMouseDown}
@@ -182,7 +182,10 @@ const AvatarDesign = ({ cells, setCells, setCode }) => {
       </div>
 
       <div className="flex items-center justify-around m-4">
-        <label htmlFor="dragMode" className="inline-flex items-center mr-2">
+        <label
+          htmlFor="dragMode"
+          className="inline-flex items-center mr-2 text-neutral-200"
+        >
           <input
             type="checkbox"
             id="dragMode"
@@ -196,19 +199,19 @@ const AvatarDesign = ({ cells, setCells, setCode }) => {
         </label>
         <div className="flex items-center">
           <button
-            className="bg-blue-500 text-white px-2 py-1 rounded"
+            className="bg-neutral-700 text-neutral-100 px-2 py-1 rounded hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-neutral-500 transition-all duration-200 ease-in-out shadow-md"
             onClick={applyColorToAll}
           >
             <i className="bi bi-paint-bucket"></i>
           </button>
-          <span className="ml-2">Background</span>
+          <span className="ml-2 text-neutral-200">Background</span>
           <div
-            className="ml-2 w-6 h-6 rounded-full border border-gray-300"
+            className="ml-2 w-6 h-6 rounded-full border border-gray-300 shadow-inner"
             style={{ backgroundColor: color }}
           ></div>
         </div>
 
-        <label className="inline-flex items-center">
+        <label className="inline-flex items-center text-neutral-200">
           <input
             type="checkbox"
             checked={mode === MODES.eraser}
@@ -220,13 +223,12 @@ const AvatarDesign = ({ cells, setCells, setCode }) => {
         </label>
         <div>
           <button
-            className="bg-red-500 text-white px-2 py-1 rounded"
+            className="bg-neutral-700 text-neutral-100 px-2 py-1 rounded hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-neutral-500 transition-all duration-200 ease-in-out shadow-md"
             onClick={resetToDefault}
           >
-            {" "}
             <i className="bi bi-arrow-counterclockwise"></i>
           </button>
-          <span className="ml-2">Default</span>
+          <span className="ml-2 text-neutral-200">Default</span>
         </div>
       </div>
     </div>
