@@ -2,31 +2,32 @@ import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter";
 import jsx from "react-syntax-highlighter/dist/esm/languages/prism/jsx";
 import twilight from "react-syntax-highlighter/dist/esm/styles/prism/twilight";
 import clipboardCopy from "clipboard-copy";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 SyntaxHighlighter.registerLanguage("jsx", jsx);
 
+const initialTwilight = JSON.parse(JSON.stringify(twilight));
+initialTwilight['code[class*="language-"]'].fontSize = "12px";
+
 const AvatarCode = ({ code }) => {
-  const [fontSize, setFontSize] = useState(12);
-  const [customTwilight, setCustomTwilight] = useState(() => {
-    const initialTwilight = JSON.parse(JSON.stringify(twilight));
-    initialTwilight['code[class*="language-"]'].fontSize = `${fontSize}px`;
-    return initialTwilight;
-  });
+  const [customTwilight, setCustomTwilight] = useState(initialTwilight);
 
-  const handleFontSizeChange = increment => {
-    setFontSize(prevFontSize => {
+  const handleFontSizeChange = useCallback(increment => {
+    setCustomTwilight(prevTwilight => {
+      const prevFontSize = parseInt(
+        prevTwilight['code[class*="language-"]'].fontSize,
+        10
+      );
       const newFontSize = prevFontSize + increment;
-      const newTwilight = JSON.parse(JSON.stringify(customTwilight));
+      const newTwilight = JSON.parse(JSON.stringify(prevTwilight));
       newTwilight['code[class*="language-"]'].fontSize = `${newFontSize}px`;
-      setCustomTwilight(newTwilight);
-      return newFontSize;
+      return newTwilight;
     });
-  };
+  }, []);
 
-  const handleCopy = () => {
+  const handleCopy = useCallback(() => {
     clipboardCopy(code);
-  };
+  }, [code]);
 
   return (
     <div className="flex flex-col">
