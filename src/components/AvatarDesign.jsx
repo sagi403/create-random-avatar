@@ -181,10 +181,10 @@ const AvatarDesign = ({ cells, setCells, setCode }) => {
         </div>
       </div>
 
-      <div className="flex items-center justify-around m-4">
+      <div className="flex flex-col md:flex-row gap-6 items-center justify-around m-4">
         <label
           htmlFor="dragMode"
-          className="inline-flex items-center mr-2 text-neutral-200"
+          className="inline-flex items-center mr-2 text-neutral-200 whitespace-nowrap"
         >
           <input
             type="checkbox"
@@ -197,7 +197,7 @@ const AvatarDesign = ({ cells, setCells, setCode }) => {
             <i className="bi bi-arrows-move"></i> Move
           </span>
         </label>
-        <div className="flex items-center">
+        <div className="flex items-center whitespace-nowrap">
           <button
             className="bg-neutral-700 text-neutral-100 px-2 py-1 rounded hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-neutral-500 transition-all duration-200 ease-in-out shadow-md"
             onClick={applyColorToAll}
@@ -211,7 +211,7 @@ const AvatarDesign = ({ cells, setCells, setCode }) => {
           ></div>
         </div>
 
-        <label className="inline-flex items-center text-neutral-200">
+        <label className="inline-flex items-center text-neutral-200 whitespace-nowrap">
           <input
             type="checkbox"
             checked={mode === MODES.eraser}
@@ -221,7 +221,7 @@ const AvatarDesign = ({ cells, setCells, setCode }) => {
             <i className="bi bi-eraser"></i> Erase
           </span>
         </label>
-        <div>
+        <div className="whitespace-nowrap">
           <button
             className="bg-neutral-700 text-neutral-100 px-2 py-1 rounded hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-neutral-500 transition-all duration-200 ease-in-out shadow-md"
             onClick={resetToDefault}
@@ -230,6 +230,28 @@ const AvatarDesign = ({ cells, setCells, setCode }) => {
           </button>
           <span className="ml-2 text-neutral-200">Default</span>
         </div>
+      </div>
+      <hr className="border-neutral-800 mt-10 mb-16" />
+      <div className="text-xs text-neutral-200 px-5 md:px-0 mx-0 xl:mx-14">
+        <h3 className="mb-2 text-neutral-400">How to use:</h3>
+        <p className="pb-1">
+          <span className="text-neutral-100">Move:</span> Click and drag the
+          grid to reposition the avatar design.
+        </p>
+        <p className="pb-1">
+          <span className="text-neutral-100">Background:</span> Click the button
+          to set the currently selected color as the background for all cells.
+        </p>
+        <p className="pb-1">
+          <span className="text-neutral-100">Erase:</span> Enable the eraser
+          tool to remove color from a cell, reverting it to the default
+          background color.
+        </p>
+        <p>
+          <span className="text-neutral-100">Default:</span> Click the button to
+          reset the entire grid to the default background color, clearing the
+          avatar design.
+        </p>
       </div>
     </div>
   );
