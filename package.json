@@ -1,6 +1,6 @@
 {
-  "homepage": "https://sagi403.github.io/create-random-avatar",
   "name": "create-random-avatar",
+  "homepage": "https://sagi403.github.io/create-random-avatar",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
