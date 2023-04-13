@@ -4,7 +4,7 @@ import MainScreen from "./screens/MainScreen";
 const App = () => {
   return (
     <>
-      <Router basename="/create-random-avatar">
+      <Router>
         <Routes>
           <Route path="/" element={<MainScreen />} />
         </Routes>
