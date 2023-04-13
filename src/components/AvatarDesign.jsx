@@ -15,7 +15,7 @@ const AvatarDesign = ({ cells, setCells, setCode }) => {
 
   const updateCode = useCallback(
     newCells => {
-      let codeString = `export const test1: string[][] = [\n`;
+      let codeString = `export const enterYourAvatarNameHere: string[][] = [\n`;
       for (const row of newCells) {
         codeString += ` [${row.map(cell => `'${cell}'`).join(", ")}],\n`;
       }
