@@ -1,6 +1,9 @@
 import { useState, useCallback } from "react";
 import { SketchPicker } from "react-color";
 import { DEFAULT_CELLS_COLOR, DEFAULT_COLOR, MODES } from "../constants/const";
+import Grid from "./Grid";
+import Controls from "./Controls";
+import Helper from "./Helper";
 
 const AvatarDesign = ({ cells, setCells, setCode }) => {
   const [defaultColor, setDefaultColor] = useState(DEFAULT_CELLS_COLOR);
@@ -104,37 +107,6 @@ const AvatarDesign = ({ cells, setCells, setCode }) => {
     }
   };
 
-  const renderCells = () => {
-    return cells.map((rowCells, rowIndex) => {
-      return rowCells.map((cellColor, colIndex) => {
-        let cursorStyle = `url('/pen.png'), auto`;
-
-        if (mode === MODES.eraser) {
-          cursorStyle = `url('/eraser.png'), auto`;
-        } else if (mode === MODES.drag) {
-          cursorStyle = `move`;
-        }
-
-        const cellStyle = {
-          backgroundColor: cellColor,
-          cursor: cursorStyle,
-        };
-
-        return (
-          <div
-            key={`${rowIndex}-${colIndex}`}
-            className="w-4 h-4 border border-gray-300"
-            style={cellStyle}
-            onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
-            onMouseUp={handleMouseUp}
-            onMouseMove={e => handleMouseMove(rowIndex, colIndex, e)}
-            onDragStart={e => e.preventDefault()}
-          ></div>
-        );
-      });
-    });
-  };
-
   const applyColorToAll = () => {
     const newCells = Array.from({ length: 16 }, () => Array(16).fill(color));
 
@@ -166,93 +138,31 @@ const AvatarDesign = ({ cells, setCells, setCode }) => {
       <div className="flex-grow flex xl:flex-row">
         <div className="flex xl:flex-row gap-6 flex-col items-center justify-around w-full py-10">
           <div className="bg-neutral-800 p-5 rounded-3xl shadow-lg">
-            <div
-              className="w-64 h-64 grid grid-cols-16"
-              onMouseDown={handleGridMouseDown}
-              onMouseUp={handleGridMouseUp}
-              onMouseMove={handleGridMouseMove}
-            >
-              {renderCells()}
-            </div>
+            <Grid
+              cells={cells}
+              handleMouseDown={handleMouseDown}
+              handleMouseUp={handleMouseUp}
+              handleMouseMove={handleMouseMove}
+              handleGridMouseDown={handleGridMouseDown}
+              handleGridMouseUp={handleGridMouseUp}
+              handleGridMouseMove={handleGridMouseMove}
+              mode={mode}
+            />
           </div>
           <div className="flex flex-col justify-center">
             <SketchPicker color={color} onChange={handleColorChange} />
           </div>
         </div>
       </div>
-
-      <div className="flex flex-col md:flex-row gap-6 items-center justify-around m-4">
-        <label
-          htmlFor="dragMode"
-          className="inline-flex items-center mr-2 text-neutral-200 whitespace-nowrap"
-        >
-          <input
-            type="checkbox"
-            id="dragMode"
-            className="form-checkbox"
-            checked={mode === MODES.drag}
-            onChange={() => handleModeChange(MODES.drag)}
-          />
-          <span className="ml-2">
-            <i className="bi bi-arrows-move"></i> Move
-          </span>
-        </label>
-        <div className="flex items-center whitespace-nowrap">
-          <button
-            className="bg-neutral-700 text-neutral-100 px-2 py-1 rounded hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-neutral-500 transition-all duration-200 ease-in-out shadow-md"
-            onClick={applyColorToAll}
-          >
-            <i className="bi bi-paint-bucket"></i>
-          </button>
-          <span className="ml-2 text-neutral-200">Background</span>
-          <div
-            className="ml-2 w-6 h-6 rounded-full border border-gray-300 shadow-inner"
-            style={{ backgroundColor: color }}
-          ></div>
-        </div>
-
-        <label className="inline-flex items-center text-neutral-200 whitespace-nowrap">
-          <input
-            type="checkbox"
-            checked={mode === MODES.eraser}
-            onChange={() => handleModeChange(MODES.eraser)}
-          />
-          <span className="ml-2">
-            <i className="bi bi-eraser"></i> Erase
-          </span>
-        </label>
-        <div className="whitespace-nowrap">
-          <button
-            className="bg-neutral-700 text-neutral-100 px-2 py-1 rounded hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-neutral-500 transition-all duration-200 ease-in-out shadow-md"
-            onClick={resetToDefault}
-          >
-            <i className="bi bi-arrow-counterclockwise"></i>
-          </button>
-          <span className="ml-2 text-neutral-200">Default</span>
-        </div>
-      </div>
+      <Controls
+        color={color}
+        mode={mode}
+        handleModeChange={handleModeChange}
+        applyColorToAll={applyColorToAll}
+        resetToDefault={resetToDefault}
+      />
       <hr className="border-neutral-800 mt-10 mb-16" />
-      <div className="text-xs text-neutral-200 px-5 md:px-0 mx-0 xl:mx-14">
-        <h3 className="mb-2 text-neutral-400">How to use:</h3>
-        <p className="pb-1">
-          <span className="text-neutral-100">Move:</span> Click and drag the
-          grid to reposition the avatar design.
-        </p>
-        <p className="pb-1">
-          <span className="text-neutral-100">Background:</span> Click the button
-          to set the currently selected color as the background for all cells.
-        </p>
-        <p className="pb-1">
-          <span className="text-neutral-100">Erase:</span> Enable the eraser
-          tool to remove color from a cell, reverting it to the default
-          background color.
-        </p>
-        <p>
-          <span className="text-neutral-100">Default:</span> Click the button to
-          reset the entire grid to the default background color, clearing the
-          avatar design.
-        </p>
-      </div>
+      <Helper />
     </div>
   );
 };
